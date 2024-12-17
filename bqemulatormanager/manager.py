@@ -11,7 +11,7 @@ from bqemulatormanager.schema import SchemaManager
 
 class Manager:
 
-    def __init__(self, project: str = 'test', port: int = 9050, schema_path: str = 'master_schema.yaml',
+    def __init__(self, project: str = 'test', host: str = 'localhost', port: int = 9050, schema_path: str = 'master_schema.yaml',
     launch_emulator:bool=True, debug_mode:bool=False, max_pool:int=20):
 
         original_port = port
@@ -26,7 +26,7 @@ class Manager:
         else:
             raise RuntimeError(f'there is no empty port from {original_port} to {port}')
 
-        self.client = self._make_client(project, port)
+        self.client = self._make_client(project, host, port)
 
         prod_client = bigquery.Client(project)
 
@@ -42,8 +42,8 @@ class Manager:
         del self.schema_manager
 
     @staticmethod
-    def _make_client(project_name: str, port: int) -> bigquery.Client:
-        client_options = ClientOptions(api_endpoint=f"http://0.0.0.0:{port}")
+    def _make_client(project_name: str, host: str, port: int) -> bigquery.Client:
+        client_options = ClientOptions(api_endpoint=f"http://{host}:{port}")
         client = bigquery.Client(
             project_name,
             client_options=client_options,
